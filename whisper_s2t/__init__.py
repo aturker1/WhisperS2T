@@ -3,6 +3,8 @@ from platformdirs import user_cache_dir
 
 from .utils import write_outputs
 
+from .convert_checkpoint import convert_checkpoint
+
 BASE_PATH = os.path.dirname(__file__)
 
 CACHE_DIR = user_cache_dir("whisper_s2t")
