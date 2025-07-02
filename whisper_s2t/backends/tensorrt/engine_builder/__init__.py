@@ -15,7 +15,7 @@ class TRTBuilderConfig:
                  max_batch_size=24,
                  max_beam_width=1,
                  max_input_len=4,
-                 max_output_len=448,
+                 max_output_len=444,
                  world_size=1,
                  dtype='float16',
                  quantize_dir='quantize/1-gpu',

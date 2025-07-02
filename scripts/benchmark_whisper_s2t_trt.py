@@ -25,7 +25,7 @@ def run(repo_path, batch_size=16, eval_mp3=True, eval_multilingual=True):
 
     trt_build_args = TRTBuilderConfig(
         max_batch_size=batch_size, 
-        max_output_len=448
+        max_output_len=444
     )
 
     model_kwargs = {
