@@ -226,9 +226,12 @@ class Tokenizer:
     def timestamp_begin(self) -> int:
         return self.no_timestamps + 1
 
-    def sot_sequence(self, task=None, lang=None):
+    def sot_sequence(self, task=None, lang=None, prompt = None):
         sequence = [self.sot]
-        
+
+        if prompt is not None:
+            sequence += self.encode(prompt)        
+
         if self.multilingual:
             sequence.append(self.lang_code_to_token_id[lang])
             sequence.append(self.task_to_token_id[task])

@@ -166,12 +166,12 @@ class WhisperDataLoader:
     def get_segmented_audio_signal(self, start_ends, audio_signal, file_id, lang, task, initial_prompt, sr=16000):
 
         if initial_prompt:
-            initial_prompt = " " + initial_prompt.strip()
-            initial_prompt_tokens = self.tokenizer.encode(initial_prompt)[-self.max_initial_prompt_len:]
+            initial_prompt = " " + initial_prompt
+            initial_prompt_tokens = []
         else:
             initial_prompt_tokens = []
 
-        prompt = self.tokenizer.sot_sequence(task=task, lang=lang)
+        prompt = self.tokenizer.sot_sequence(task=task, lang=lang, prompt=initial_prompt)
         
         if self.without_timestamps:
             prompt.append(self.tokenizer.no_timestamps)

@@ -326,7 +326,7 @@ class WhisperTRTLLM(object):
             assert json_config.model_config.supports_inflight_batching
             runner_kwargs = dict(engine_dir=engine_dir,
                                  is_enc_dec=True,
-                                 max_batch_size=32,
+                                 max_batch_size=64,
                                  max_input_len=3000,
                                  max_output_len=444,
                                  max_beam_width=1,
@@ -393,6 +393,7 @@ class WhisperModelTRT(WhisperModel):
                  compute_type="float16",
                  max_text_token_len=MAX_TEXT_TOKEN_LENGTH,
                  asr_options={},
+                 use_py_session=False,
                  **model_kwargs):
 
         # ASR Options
@@ -411,7 +412,7 @@ class WhisperModelTRT(WhisperModel):
         self.trt_build_args = trt_build_args
 
         # Load model
-        self.model = WhisperTRTLLM(model_name_or_path,assets_dir=model_name_or_path+"/../assets", **model_kwargs)
+        self.model = WhisperTRTLLM(model_name_or_path,assets_dir=model_name_or_path+"/../assets", use_py_session=use_py_session, **model_kwargs)
         
         # Load tokenizer
         # tokenizer_file = os.path.join(model_name_or_path, "tokenizer.json")
