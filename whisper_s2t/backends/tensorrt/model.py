@@ -537,9 +537,12 @@ class WhisperModelTRT(WhisperModel):
 
         return word_timings
     
-    def generate_segment_batched(self, features, prompts, seq_lens, seg_metadata):
+    def generate_segment_batched(self, features, prompts, seq_lens, seg_metadata, temperature=0.0):
 
-        result = self.model.process_batch(features, prompt_id=prompts[0], **self.generate_kwargs)
+        kwargs = self.generate_kwargs.copy()
+        kwargs['temperature'] = temperature
+
+        result = self.model.process_batch(features, prompt_id=prompts[0], **kwargs)
         
         texts = self.tokenizer.decode_batch([x[0] for x in result])
         
