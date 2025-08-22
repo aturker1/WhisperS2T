@@ -230,7 +230,7 @@ class Tokenizer:
         sequence = [self.sot]
 
         if prompt is not None:
-            sequence += self.encode(prompt)        
+            sequence += self.tokenizer.encode(prompt, allowed_special="all")        
 
         if self.multilingual:
             sequence.append(self.lang_code_to_token_id[lang])
