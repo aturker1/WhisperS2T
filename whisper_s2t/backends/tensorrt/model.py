@@ -229,7 +229,8 @@ class WhisperDecoding:
                  encoder_input_lengths,
                  eot_id,
                  max_new_tokens=444,
-                 num_beams=1):
+                 num_beams=1,
+                 temperature=1.0):
         batch_size = decoder_input_ids.shape[0]
         decoder_input_lengths = torch.tensor([
             decoder_input_ids.shape[-1]
@@ -245,7 +246,8 @@ class WhisperDecoding:
         # generation config
         sampling_config = SamplingConfig(end_id=eot_id,
                                          pad_id=eot_id,
-                                         num_beams=num_beams)
+                                         num_beams=num_beams,
+                                         temperature=temperature)
         self.decoder_generation_session.setup(
             decoder_input_lengths.size(0),
             decoder_max_input_length,
@@ -341,6 +343,7 @@ class WhisperTRTLLM(object):
             prompt_id,
             num_beams=1,
             max_new_tokens=444, 
+            temperature=1.0,
             **kwargs):
         
         mel = mel.type(torch.float16)
@@ -364,9 +367,11 @@ class WhisperTRTLLM(object):
                                                encoder_output_lengths,
                                                self.eot_id,
                                                max_new_tokens=max_new_tokens,
-                                               num_beams=num_beams)
+                                               num_beams=num_beams,
+                                               temperature=temperature)
         else:
             with torch.no_grad():
+                print("Generating with temperature: ", temperature, "Num beams: ", num_beams)
                 outputs = self.model_runner_cpp.generate(
                     batch_input_ids=decoder_input_ids,
                     encoder_input_features=mel.transpose(1, 2),
@@ -374,9 +379,11 @@ class WhisperTRTLLM(object):
                     max_new_tokens=max_new_tokens,
                     end_id=self.eot_id,
                     pad_id=self.eot_id,
-                    num_beams=num_beams,
+                    num_beams=1,
                     output_sequence_lengths=True,
-                    return_dict=True)
+                    return_dict=True,
+                    temperature=temperature,
+                    top_k=50)
                 torch.cuda.synchronize()
                 output_ids = outputs['output_ids'].cpu().numpy().tolist()
 
@@ -537,7 +544,7 @@ class WhisperModelTRT(WhisperModel):
 
         return word_timings
     
-    def generate_segment_batched(self, features, prompts, seq_lens, seg_metadata, temperature=0.0):
+    def generate_segment_batched(self, features, prompts, seq_lens, seg_metadata, temperature=1.0):
 
         kwargs = self.generate_kwargs.copy()
         kwargs['temperature'] = temperature
