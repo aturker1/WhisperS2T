@@ -227,19 +227,33 @@ class Tokenizer:
         return self.no_timestamps + 1
 
     def sot_sequence(self, task=None, lang=None, prompt = None):
-        sequence = [self.sot]
-
+        sequence = []
+        print("We are here")
+        
+        # Add prompt BEFORE startoftranscript if provided
         if prompt is not None:
-            sequence += self.tokenizer.encode(prompt, allowed_special="all")        
+            print("Adding sot_prev")
+            sequence.append(self.sot_prev)  # <|startofprev|>
+            print("Seqeuence:", sequence)
+            sequence += self.tokenizer.encode(prompt, allowed_special="all")
+            print("Sequence after adding prompt:", sequence)
 
+        print("Sequence after adding prompt:", sequence)
+        
+        # Add the main sequence
+        sequence.append(self.sot)  # <|startoftranscript|>
+        print("Sequence after adding sot:", sequence)
+        
         if self.multilingual:
             sequence.append(self.lang_code_to_token_id[lang])
             sequence.append(self.task_to_token_id[task])
 
+        print("Sequence after adding sot:", sequence)
+
         return sequence
 
     def encode(self, text):
-        return self.tokenizer.encode(text, add_special_tokens=False).ids
+        return self.tokenizer.encode(text)
 
     def decode(self, tokens):
         text_tokens = [token for token in tokens if token < self.eot]

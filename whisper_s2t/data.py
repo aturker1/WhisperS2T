@@ -109,11 +109,11 @@ class WhisperDataset(torch.utils.data.Dataset):
         
         if self.initial_prompts[item]:
             initial_prompt = " " + self.initial_prompts[item].strip()
-            initial_prompt_tokens = self.tokenizer.encode(initial_prompt)[-self.max_initial_prompt_len:]
+            initial_prompt_tokens = []
         else:
             initial_prompt_tokens = []
         
-        prompt = self.tokenizer.sot_sequence(task=self.tasks[item], lang=self.lang_codes[item])
+        prompt = self.tokenizer.sot_sequence(task=self.tasks[item], lang=self.lang_codes[item], prompt=initial_prompt)
         
         if self.without_timestamps:
             prompt = prompt + [self.tokenizer.no_timestamps]
